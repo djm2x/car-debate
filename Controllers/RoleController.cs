@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Repository.Shared;
 
 namespace mvc.Controllers
 {
+    [Authorize(Roles = "3")]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class RoleController : ControllerBase

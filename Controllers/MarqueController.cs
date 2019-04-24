@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Repository.Shared;
 
 namespace mvc.Controllers
 {
+    [Authorize(Roles = "1")]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class MarqueController : ControllerBase
@@ -27,10 +29,26 @@ namespace mvc.Controllers
         [HttpGet("{startIndex}/{pageSize}")]
         public async Task<IActionResult> GetList(int startIndex, int pageSize)
         {
+            var list = await _unitOfWork.Marques.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
+                            // .Include(e => e.Country)
+                            .Select(e => new {
+                                e.Id,
+                                e.Name,
+                                e.Country
+                            })
+                            .ToListAsync();
+            var count = await _unitOfWork.Marques.CountAsync();
             return Ok(new
             {
                 list = await _unitOfWork.Marques.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
-                            .Include(e => e.Country).ToListAsync(),
+                            // .Include(e => e.Country)
+                            .Select(e => new {
+                                e.Id,
+                                e.Name,
+                                e.ImageUrl,
+                                e.Country
+                            })
+                            .ToListAsync(),
                 count = await _unitOfWork.Marques.CountAsync()
             });
         }

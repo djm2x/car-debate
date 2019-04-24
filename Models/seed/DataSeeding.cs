@@ -14,5 +14,34 @@ namespace seed
                 new Marque {Id = 1, Name = "casa blanca"},
             });
         }
+
+        public static void AddRoles(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Role>().HasData(new Role[]{
+                new Role {Id = 1, Name = "users"},
+                new Role {Id = 2, Name = "sa"},
+                new Role {Id = 3, Name = "admins"},
+            });
+        }
+
+        public static void AddSA(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(new User[]{
+                new User
+                {
+                    Id = 1,
+                    FullName = "sa",
+                    Email = "sa@angular.io",
+                    Password = "123",
+                },
+            });
+        }
+
+        public static void AddUsersRole(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserRole>().HasData(new UserRole[]{
+                new UserRole { IdRole = 3, IdUser = 1},
+            });
+        }
     }
 }

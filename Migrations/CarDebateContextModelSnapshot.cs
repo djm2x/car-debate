@@ -29,11 +29,11 @@ namespace mvc.Migrations
 
                     b.Property<DateTime>("DateAdvert")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 4, 17, 1, 24, 56, 479, DateTimeKind.Local).AddTicks(7057));
+                        .HasDefaultValue(new DateTime(2019, 4, 22, 3, 26, 54, 830, DateTimeKind.Local).AddTicks(4272));
 
                     b.Property<DateTime>("DateSell")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2019, 4, 17, 1, 24, 56, 481, DateTimeKind.Local).AddTicks(5331));
+                        .HasDefaultValue(new DateTime(2019, 4, 22, 3, 26, 54, 831, DateTimeKind.Local).AddTicks(9627));
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -158,6 +158,10 @@ namespace mvc.Migrations
 
                     b.Property<int>("IdTypeVoiture");
 
+                    b.Property<int>("IdUser")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(null);
+
                     b.Property<float>("Poid");
 
                     b.Property<float>("Prix");
@@ -177,6 +181,8 @@ namespace mvc.Migrations
                     b.HasIndex("IdTransmission");
 
                     b.HasIndex("IdTypeVoiture");
+
+                    b.HasIndex("IdUser");
 
                     b.ToTable("Models");
                 });
@@ -212,6 +218,23 @@ namespace mvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "users"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "sa"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "admins"
+                        });
                 });
 
             modelBuilder.Entity("mvc.Transmission", b =>
@@ -226,20 +249,6 @@ namespace mvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Transmissions");
-                });
-
-            modelBuilder.Entity("mvc.TypeUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TypeUsers");
                 });
 
             modelBuilder.Entity("mvc.TypeVoiture", b =>
@@ -262,9 +271,7 @@ namespace mvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(250);
+                    b.Property<string>("Address");
 
                     b.Property<string>("Email")
                         .IsRequired();
@@ -279,14 +286,24 @@ namespace mvc.Migrations
                     b.Property<string>("Password")
                         .IsRequired();
 
-                    b.Property<string>("Tel")
-                        .IsRequired();
+                    b.Property<string>("Tel");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdTypeUser");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "sa@angular.io",
+                            FullName = "sa",
+                            IdTypeUser = 0,
+                            Password = "123"
+                        });
                 });
 
             modelBuilder.Entity("mvc.UserRole", b =>
@@ -351,6 +368,11 @@ namespace mvc.Migrations
                         .WithMany("Models")
                         .HasForeignKey("IdTypeVoiture")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("mvc.User", "User")
+                        .WithMany("Models")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("mvc.ModelImg", b =>
@@ -358,14 +380,6 @@ namespace mvc.Migrations
                     b.HasOne("mvc.Model", "Model")
                         .WithMany("ModelImgs")
                         .HasForeignKey("IdModel")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("mvc.User", b =>
-                {
-                    b.HasOne("mvc.TypeUser", "TypeUser")
-                        .WithMany("Users")
-                        .HasForeignKey("IdTypeUser")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

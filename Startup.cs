@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Repository.Shared;
 
@@ -24,8 +25,8 @@ namespace mvc
         // }
 
         // public IConfiguration Configuration { get; }
-
-        public Startup(IHostingEnvironment env)
+        private readonly ILogger _logger;
+        public Startup(IHostingEnvironment env, ILogger<Startup> logger)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -33,6 +34,7 @@ namespace mvc
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             this.Configuration = builder.Build();
+            _logger = logger;
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -51,12 +53,13 @@ namespace mvc
 
             services.ConfigureIISIntegration();
             services.ConfigureDbContext(Configuration, "carDebateAsus");
-            // services.ConfigureAuthentication(Configuration);
+            services.ConfigureAuthentication(Configuration);
 
             services.AddNodeServices();
             // services.AddSpaPrerenderer();
             services.AddHttpContextAccessor();
             services.AddTransient<UnitOfWork>();
+             _logger.LogInformation("Added UnitOfWork to services");
             // services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
@@ -66,10 +69,6 @@ namespace mvc
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                // app.UseWebpackDevMiddleware (new WebpackDevMiddlewareOptions {
-                //     HotModuleReplacement = true,
-                //         HotModuleReplacementEndpoint = "/"
-                // });
             }
             else
             {
@@ -77,12 +76,26 @@ namespace mvc
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseCors("CorsPolicy");
             // app.UseSignalR(routes =>
             // {
             //     routes.MapHub<Notification>("/notify");
             // });
+            app.Use(async (context, next) => {
+                IHeaderDictionary headers = context.Request.Headers;
+                // var auth = headers.HeaderAuthorization();
+                // var type = headers.HeaderContentType();
+                
+                _logger.LogInformation("costum mw 1 to the controller");
+                await next();
+            });
+
+            app.UseCors("CorsPolicy");
             app.UseMiddleware<ErrorHandler>();
+            
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            // app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -92,11 +105,7 @@ namespace mvc
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
-            // app.UseMvc();
-            
+
         }
     }
 }

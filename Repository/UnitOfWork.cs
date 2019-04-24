@@ -23,10 +23,10 @@ namespace Repository.Shared
             Adverts = new Repository<Advert>(_context);
             Transmissions = new Repository<Transmission>(_context);
             TypeVoitures = new Repository<TypeVoiture>(_context);
-            TypeUsers = new Repository<TypeUser>(_context);
+            // TypeUsers = new Repository<TypeUser>(_context);
         }
         public IUserRepository Users { get; private set; }
-        public IRepository<TypeUser> TypeUsers { get; private set; }
+        // public IRepository<TypeUser> TypeUsers { get; private set; }
         public IModelRepository Models { get; private set; }
         public IUserRoleRepository UserRoles { get; private set; }
         public IRepository<Marque> Marques { get; private set; }

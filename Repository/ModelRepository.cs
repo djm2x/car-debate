@@ -16,7 +16,7 @@ namespace Repository.Shared
             _context = context;
         }
 
-        public async Task<IEnumerable<Model>> GetAllForModel(int idMarque, int startIndex, int pageSize)
+        public async Task<IEnumerable<Model>> GetPageForModel(int idMarque, int startIndex, int pageSize)
         {
             return await _context.Models.OrderByDescending(o => o.Id)
                     .Where(e => e.IdMarque == idMarque)
@@ -28,6 +28,20 @@ namespace Repository.Shared
                     .Include(e => e.ModelImgs)
                     .ToListAsync();
         }
+
+        public async Task<IEnumerable<Model>> GetAllForModel(int idMarque)
+        {
+            return await _context.Models.OrderByDescending(o => o.Id)
+                    .Where(e => e.IdMarque == idMarque)
+                    .Include(e => e.Carburant)
+                    .Include(e => e.Transmission)
+                    .Include(e => e.TypeVoiture)
+                    .Include(e => e.Marque)
+                    .Include(e => e.ModelImgs)
+                    .ToListAsync();
+        }
+
+        
         public CarDebateContext MyContext
         {
             get { return Context as CarDebateContext; }

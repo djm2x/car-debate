@@ -27,7 +27,7 @@ namespace mvc.Controllers
             return Ok(new
             {
                 list = await _unitOfWork.Users.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
-                            .Include(e => e.TypeUser)
+                            // .Include(e => e.TypeUser)
                             .Include(e => e.UserRoles)
                             .ThenInclude(e => e.Role)
                             .ToListAsync(),
@@ -79,6 +79,22 @@ namespace mvc.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Login([FromBody] UserVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            dynamic obj = await _unitOfWork.Users.LogIn(model.Email, model.Password);
+
+            if (obj == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(new {user = obj.user, token = obj.token, idRole = obj.idRole});
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Post([FromBody] User model)
         {
             if (!ModelState.IsValid)
@@ -86,10 +102,11 @@ namespace mvc.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _unitOfWork.Users.AddAsync(model);
+            await _unitOfWork.Users.SignIn(model);
 
-            int i = await _unitOfWork.Complete();
-            return Ok(i);
+            await _unitOfWork.Complete();
+            model.UserRoles = null;
+            return Ok(model);
         }
 
         [HttpDelete("{id}")]
@@ -122,4 +139,10 @@ namespace mvc.Controllers
             return true;
         }
     }
+}
+
+public class UserVM
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

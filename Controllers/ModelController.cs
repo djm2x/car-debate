@@ -24,6 +24,13 @@ namespace mvc.Controllers
         [HttpGet("{startIndex}/{pageSize}")]
         public async Task<IActionResult> GetList(int startIndex, int pageSize)
         {
+            var  list = await _unitOfWork.Models.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
+                            .Include(e => e.Carburant)
+                            .Include(e => e.Transmission)
+                            .Include(e => e.TypeVoiture)
+                            .Include(e => e.Marque)
+                            .ThenInclude(e => e.Country)
+                            .ToListAsync();
             return Ok(new
             {
                 list = await _unitOfWork.Models.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
@@ -38,13 +45,19 @@ namespace mvc.Controllers
         }
 
         [HttpGet("{idMarque}/{startIndex}/{pageSize}")]
-        public async Task<IActionResult> GetAllForModel(int idMarque, int startIndex, int pageSize)
+        public async Task<IActionResult> GetPageForModel(int idMarque, int startIndex, int pageSize)
         {
             return Ok(new
             {
-                list = await _unitOfWork.Models.GetAllForModel(idMarque, startIndex, pageSize),
+                list = await _unitOfWork.Models.GetPageForModel(idMarque, startIndex, pageSize),
                 count = await _unitOfWork.Models.CountAsync()
             });
+        }
+
+        [HttpGet("{idMarque}")]
+        public async Task<IEnumerable<Model>> GetAllForModel(int idMarque)
+        {
+            return await _unitOfWork.Models.GetAllForModel(idMarque);
         }
 
         [HttpGet]

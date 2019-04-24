@@ -8,6 +8,7 @@ namespace mvc
         {
             UserRoles = new HashSet<UserRole>();
             Adverts = new HashSet<Advert>();
+            Models = new HashSet<Model>();
         }
         public int Id { get; set; }
         public string FullName { get; set; }
@@ -17,8 +18,9 @@ namespace mvc
         public string Email { get; set; }
         public string Password { get; set; }
         public int IdTypeUser { get; set; }
-        public TypeUser TypeUser { get; set; }
+        // public TypeUser TypeUser { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<Model> Models { get; set; }
         public virtual ICollection<Advert> Adverts { get; set; }
     }
 }

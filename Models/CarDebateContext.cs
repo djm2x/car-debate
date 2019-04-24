@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using seed;
 
 namespace mvc
 {
@@ -22,7 +23,7 @@ namespace mvc
         }
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<TypeUser> TypeUsers { get; set; }
+        // public virtual DbSet<TypeUser> TypeUsers { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<Advert> Adverts { get; set; }
@@ -41,6 +42,10 @@ namespace mvc
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+             modelBuilder.Entity<User>()
+                        .HasIndex(o => o.Email)
+                        .IsUnique(true);
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -48,26 +53,30 @@ namespace mvc
                 entity.Property(e => e.FullName).IsRequired();
                 entity.Property(e => e.Email).IsRequired();
                 entity.Property(e => e.Password).IsRequired();
-                entity.Property(e => e.Tel).IsRequired();
-                entity.Property(e => e.Address).IsRequired().HasMaxLength(250);
-                entity.HasOne(d => d.TypeUser).WithMany(p => p.Users).HasForeignKey(d => d.IdTypeUser);
+                // entity.Property(e => e.Tel).IsRequired();
+                // entity.Property(e => e.Address).IsRequired().HasMaxLength(250);
+                entity.Property(d => d.IdTypeUser).IsRequired();
+                // entity.HasOne(d => d.TypeUser).WithMany(p => p.Users).HasForeignKey(d => d.IdTypeUser);
                 entity.HasMany(c => c.Adverts)
                     .WithOne(e => e.User)
                     .OnDelete(DeleteBehavior.Cascade);
                 entity.HasMany(c => c.UserRoles)
                     .WithOne(e => e.User)
                     .OnDelete(DeleteBehavior.Cascade);  
+                entity.HasMany(c => c.Models)
+                    .WithOne(e => e.User)
+                    .OnDelete(DeleteBehavior.Cascade);  
             });
 
-            modelBuilder.Entity<TypeUser>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
-                entity.Property(e => e.Name).IsRequired();
-                entity.HasMany(c => c.Users)
-                    .WithOne(e => e.TypeUser)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
+            // modelBuilder.Entity<TypeUser>(entity =>
+            // {
+            //     entity.HasKey(e => e.Id);
+            //     entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            //     entity.Property(e => e.Name).IsRequired();
+            //     entity.HasMany(c => c.Users)
+            //         .WithOne(e => e.TypeUser)
+            //         .OnDelete(DeleteBehavior.Cascade);
+            // });
 
             modelBuilder.Entity<Role>(entity =>
             {
@@ -197,10 +206,15 @@ namespace mvc
                 entity.Property(e => e.IdCarburant).IsRequired();
                 entity.Property(e => e.IdTransmission).IsRequired();
                 entity.Property(e => e.IdTypeVoiture).IsRequired();
+                entity.Property(e => e.IdUser).HasDefaultValue(null);
 
                 entity.HasOne(d => d.Carburant)
                     .WithMany(p => p.Models)
                     .HasForeignKey(d => d.IdCarburant);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Models)
+                    .HasForeignKey(d => d.IdUser);
 
                 entity.HasMany(c => c.ModelImgs)
                     .WithOne(e => e.Model)
@@ -218,6 +232,10 @@ namespace mvc
                     .WithMany(p => p.Models)
                     .HasForeignKey(d => d.IdTypeVoiture);
             });
+
+            modelBuilder.AddRoles();
+            modelBuilder.AddSA();
+            modelBuilder.AddUsersRole();
         }
     }
 }

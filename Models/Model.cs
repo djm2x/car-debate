@@ -28,6 +28,8 @@ namespace mvc
         public int IdCarburant { get; set; }
         public int IdTransmission { get; set; }
         public int IdTypeVoiture { get; set; }
+        public int IdUser { get; set; }
+        public virtual User User { get; set; }
         public virtual Carburant Carburant { get; set; }
         public virtual Marque Marque { get; set; }
         public virtual Transmission Transmission { get; set; }
