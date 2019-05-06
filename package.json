@@ -12,6 +12,7 @@
     "compile:server": "webpack --config webpack.server.config.js --progress --colors",
     "bw": "ng build --extractCss --watch",
     "asp": "dotnet watch run",
+    "install": "npm i",
     "all": "ng run angular:server:production && ng build --prod"
   },
   "private": true,

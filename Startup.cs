@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +60,7 @@ namespace mvc
             // services.AddSpaPrerenderer();
             services.AddHttpContextAccessor();
             services.AddTransient<UnitOfWork>();
-             _logger.LogInformation("Added UnitOfWork to services");
+            _logger.LogInformation("Added UnitOfWork to services");
             // services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
@@ -80,18 +81,19 @@ namespace mvc
             // {
             //     routes.MapHub<Notification>("/notify");
             // });
-            app.Use(async (context, next) => {
+            app.Use(async (context, next) =>
+            {
                 IHeaderDictionary headers = context.Request.Headers;
                 // var auth = headers.HeaderAuthorization();
                 // var type = headers.HeaderContentType();
-                
+
                 _logger.LogInformation("costum mw 1 to the controller");
                 await next();
             });
 
             app.UseCors("CorsPolicy");
             app.UseMiddleware<ErrorHandler>();
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             // app.UseCookiePolicy();
@@ -105,7 +107,18 @@ namespace mvc
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
 
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "install");
+                }
+            });
         }
     }
 }
