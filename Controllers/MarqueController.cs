@@ -10,7 +10,7 @@ using Repository.Shared;
 
 namespace mvc.Controllers
 {
-    [Authorize(Roles = "1")]
+    // [Authorize(Roles = "1")]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class MarqueController : ControllerBase

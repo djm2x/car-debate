@@ -38,6 +38,11 @@ namespace Repository.Shared
             return await Entities.CountAsync();
         }
 
+        public async Task<int> CountAsyncFlitred(Expression<Func<TEntity, bool>> filter)
+        {
+            return await Entities.Where(filter).CountAsync();
+        }
+
         public IQueryable<TEntity> GetPageQueryableAsync(int startIndex, int pageSize, Expression<Func<TEntity, object>> predicate)
         {
             return Entities.OrderByDescending(predicate)
@@ -88,6 +93,19 @@ namespace Repository.Shared
             Context.Entry(entity).State = EntityState.Modified;
         }
 
+        public IQueryable<TEntity> GetPageFilteredAsync(
+            int startIndex, 
+            int pageSize, 
+            Expression<Func<TEntity, object>> predicate,
+            Expression<Func<TEntity, bool>> filter
+            )
+        {
+            return Entities
+                    .OrderByDescending(predicate)
+                    .Where(filter)
+                    .Skip(startIndex)
+                    .Take(pageSize);
+        }
     }
 
 }

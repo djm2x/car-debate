@@ -236,6 +236,13 @@ namespace mvc
             modelBuilder.AddRoles();
             modelBuilder.AddSA();
             modelBuilder.AddUsersRole();
+            modelBuilder.AddCarburant();
+            modelBuilder.AddCountry();
+            modelBuilder.AddTransmission();
+            modelBuilder.AddTypeVoiture();
+            modelBuilder.AddMarque();
+            modelBuilder.AddModel();
+            modelBuilder.AddModelImg();
         }
     }
 }

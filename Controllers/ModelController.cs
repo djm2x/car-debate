@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -24,23 +25,40 @@ namespace mvc.Controllers
         [HttpGet("{startIndex}/{pageSize}")]
         public async Task<IActionResult> GetList(int startIndex, int pageSize)
         {
-            var  list = await _unitOfWork.Models.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
-                            .Include(e => e.Carburant)
-                            .Include(e => e.Transmission)
-                            .Include(e => e.TypeVoiture)
-                            .Include(e => e.Marque)
-                            .ThenInclude(e => e.Country)
-                            .ToListAsync();
+            // var  list = await _unitOfWork.Models.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
+            //                 .Include(e => e.Carburant)
+            //                 .Include(e => e.Transmission)
+            //                 .Include(e => e.TypeVoiture)
+            //                 .Include(e => e.Marque)
+            //                 .ThenInclude(e => e.Country)
+            //                 .ToListAsync();
             return Ok(new
             {
                 list = await _unitOfWork.Models.GetPageQueryableAsync(startIndex, pageSize, o => o.Id)
+                            // .Include(e => e.Carburant)
+                            // .Include(e => e.Transmission)
+                            // .Include(e => e.TypeVoiture)
+                            .Include(e => e.Marque)
+                            .ThenInclude(e => e.Country)
+                            .ToListAsync(),
+                count = await _unitOfWork.Models.CountAsync()
+            });
+        }
+
+        [HttpGet("{startIndex}/{pageSize}")]
+        public async Task<IActionResult> FilterList(int startIndex, int pageSize, string filter)
+        {
+            return Ok(new
+            {
+                list = await _unitOfWork.Models.GetPageFilteredAsync(startIndex, pageSize
+                , o => o.Id, o => o.Id == filter)
                             .Include(e => e.Carburant)
                             .Include(e => e.Transmission)
                             .Include(e => e.TypeVoiture)
                             .Include(e => e.Marque)
                             .ThenInclude(e => e.Country)
                             .ToListAsync(),
-                count = await _unitOfWork.Models.CountAsync()
+                count = await _unitOfWork.Models.CountAsyncFlitred(o => o.Id == filter)
             });
         }
 
@@ -50,7 +68,7 @@ namespace mvc.Controllers
             return Ok(new
             {
                 list = await _unitOfWork.Models.GetPageForModel(idMarque, startIndex, pageSize),
-                count = await _unitOfWork.Models.CountAsync()
+                count = await _unitOfWork.Models.CountAsyncFlitred(o => o.IdMarque == idMarque)
             });
         }
 

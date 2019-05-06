@@ -1,18 +1,29 @@
-@angular/material/select
-
 @angular/material/toolbar
 
-@angular/material/core
-
 @angular/material/icon
-
-@angular/material/divider
-
-@angular/material/paginator
 
 @angular/material/form-field
 
 @angular/material/card
+
+@angular/material/menu
+
+@angular/material/list
+
+@angular/material/expansion
+
+@aspnet/signalr
+Apache-2.0
+
+@angular/material/core
+
+@angular/material/divider
+
+@angular/material/sidenav
+
+@angular/material/select
+
+@angular/material/paginator
 
 rxjs
 Apache-2.0
@@ -437,15 +448,8 @@ THE SOFTWARE.
 
 @angular/material/datepicker
 
-@angular/material/sidenav
-
-@angular/material/list
-
-@angular/material/expansion
-
-@aspnet/signalr
-Apache-2.0
-
 @angular/material/progress-spinner
 
 @angular/material/table
+
+@angular/material/radio

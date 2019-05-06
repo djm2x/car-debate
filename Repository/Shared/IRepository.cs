@@ -12,7 +12,10 @@ namespace Repository.Shared
         IQueryable<TEntity> GetQueryableAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, object>> predicate);
         Task<int> CountAsync();
+        Task<int> CountAsyncFlitred(Expression<Func<TEntity, bool>> filter);
         IQueryable<TEntity> GetPageQueryableAsync(int startIndex, int pageSize, Expression<Func<TEntity, object>> predicate);
+        IQueryable<TEntity> GetPageFilteredAsync(int startIndex, int pageSize
+        , Expression<Func<TEntity, object>> predicate, Expression<Func<TEntity, bool>> filter);
         Task<IEnumerable<TEntity>> GetPageAsync(int startIndex, int pageSize, Expression<Func<TEntity, object>> predicate);
         Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate);
 
