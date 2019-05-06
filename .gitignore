@@ -46,3 +46,13 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# echo "# car-debate" >> README.md
+# git init
+# git add README.md
+# git commit -m "first commit"
+# git remote add origin https://github.com/djm2x/car-debate.git
+# git push -u origin master
+
+# git remote add origin https://github.com/djm2x/car-debate.git
+# git push -u origin master
