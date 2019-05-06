@@ -47,6 +47,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# heroku create car-debate --buildpack https://github.com/jincod/dotnetcore-buildpack.git
+
 # echo "# car-debate" >> README.md
 # git init
 # git add README.md
